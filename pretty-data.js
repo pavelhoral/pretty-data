@@ -90,8 +90,12 @@ pp.prototype.xml = function(text) {
 				str += ar[ix];
 				inComment = false; 
 			} else 
+			// <elm/> //
+			if(ar[ix].search(/\/>/) > -1) { 
+				str = !inComment ? str += this.shift[deep]+ar[ix] : str += ar[ix];
+			} else 
 			// <elm></elm> //
-			if( /^<\w/.exec(ar[ix-1]) && /^<\/\w/.exec(ar[ix]) &&
+			if( /^<\w/.exec(ar[ix-1]) && ar[ix-1].search(/\/>/) == -1 && /^<\/\w/.exec(ar[ix]) &&
 				/^<[\w:\-\.\,]+/.exec(ar[ix-1]) == /^<\/[\w:\-\.\,]+/.exec(ar[ix])[0].replace('/','')) { 
 				str += ar[ix];
 				if(!inComment) deep--;
@@ -107,10 +111,6 @@ pp.prototype.xml = function(text) {
 			// </elm> //
 			if(ar[ix].search(/<\//) > -1) { 
 				str = !inComment ? str += this.shift[--deep]+ar[ix] : str += ar[ix];
-			} else 
-			// <elm/> //
-			if(ar[ix].search(/\/>/) > -1 ) { 
-				str = !inComment ? str += this.shift[deep]+ar[ix] : str += ar[ix];
 			} else 
 			// <? xml ... ?> //
 			if(ar[ix].search(/<\?/) > -1) { 
